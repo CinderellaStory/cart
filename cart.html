@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>购物车</title>
+	<style type="text/css">
+		a{ text-decoration: none; }
+		table{border-collapse:collapse; width: 1000px; text-align: center;}
+		th,td{ border: 1px solid #999; padding: 10px 15px; }
+		td{ font-size: 14px;}
+		input[type='text']{height: 24px; width: 50px; text-align: center;border: 1px solid #999; float: left; outline: none;}
+		.amount span{ width: 20px;margin-top: 0px;float: left;height: 26px; line-height: 26px; cursor: pointer; onselectstart:return false; unselectable:on;user-select:none;border: 1px solid #999; font-size: 18px; }
+		.amount	.reduce{border-right: none;}
+		.amount	.plus{border-left: none;}
+		button{ cursor: pointer; font-size: 14px; margin-bottom: 20px; background:#900000; color: #fff; border: none; outline: none; padding: 5px 18px; }
+		.del{margin-right: 10px; cursor: pointer;}
+		.edit{ cursor: pointer; }
+		.footer{ margin-top: 20px; width: 1000px; height: 40px; line-height: 40px; border: 1px solid #999;}
+		.ml{ margin-left: 20px; }
+		.fl{ float: left; }
+		.fr{ float: right; }
+		.red{color: #900000; font-weight: bold; font-size: 16px; }
+		.total{ margin-right: 290px; }
+	</style>
+</head>
+<body>
+	<button>增加</button>
+	<table>
+		<tr>
+			<th width="80"><label><input type="checkbox" class="checkAll">全选</label></th>
+			<th>商品信息</th>
+			<th>单价</th>
+			<th width="100">数量</th>
+			<th width="200">小计</th>
+			<th>操作</th>
+		</tr>
+		<tr>
+			<td><input type="checkbox" class="sigle"></td>
+			<td>张三</td>
+			<td>99.00</td>
+			<td class="amount">
+				<span class="reduce">-</span>
+				<input type="text" value="10">
+				<span class="plus">+</span>
+			</td>
+			<td class="red subtotal">999.00</td>
+			<td><a class="del">删除</a><a class="edit">编辑</a></td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" class="sigle"></td>
+			<td>李四</td>
+			<td>199.00</td>
+			<td class="amount">
+				<span class="reduce">-</span>
+				<input type="text" value="1">
+				<span class="plus">+</span>
+			</td>
+			<td class="red subtotal">199.00</td>
+			<td><a class="del">删除</a><a class="edit">编辑</a></td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" class="sigle"></td>
+			<td>王五</td>
+			<td>299.00</td>
+			<td class="amount">
+				<span class="reduce">-</span>
+				<input type="text" value="1" class="txt">
+				<span class="plus">+</span>
+			</td>
+			<td class="red subtotal">299.00</td>
+			<td><a class="del">删除</a><a class="edit">编辑</a></td>
+		</tr>
+	</table>
+	<div class="footer">
+		<div class="footercheckall ml fl">
+			<label><input type="checkbox" class="checkAll">全选</label>
+		</div>
+		<a class="del fl ml">删除</a>
+		<div class="total fr">总计:<span class="red">00.00</span></div>
+	</div>
+	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+	<script>
+		// $(".checkAll").click(function(){
+		// 	var checkone = $(this).parents('table').find("input[type=checkbox]");
+		// 	if ($(this).prop('checked')) {
+		// 		checkone.prop('checked',true);
+		// 	}else
+		// 	{
+		// 		checkone.prop('checked',false);
+		// 	}
+		// });
+		// 全部选择
+		$(".checkAll").click(function(e){
+			var sigle = $("input[type=checkbox]");
+			// var total = 0;
+			if ($(this).prop('checked')) {
+				sigle.prop('checked',true);
+				// $(".total").text();
+				console.log(11111);
+			}else
+			{
+			sigle.prop('checked',false);
+				console.log(22222);
+			}
+		})
+		// 单个选择
+		$(".sigle").click(function(e){
+			//获取所选个数
+			var checkSigle = $(".sigle:checked").length;  
+			//获取input个数
+			var checkOne = $(".sigle").length;	
+			
+			// 获取小计的值
+			var subtotal = parseInt($(this).parent().siblings('.subtotal').html());
+			// 获取总计的值
+			var total = 0;
+			total = total + subtotal;
+			console.log(subtotal);
+			$(".total span").text((subtotal).toFixed(2));
+			if(checkSigle==checkOne){
+				$(".checkAll").prop('checked',true);
+			}else
+			{
+				$(".checkAll").prop('checked',false);
+			}
+		})
+		// 删除
+		$(".del").click(function(){
+			$(this).parents('tr').remove();
+		});
+		// 数量减去
+		$(".amount .reduce").click(function(){
+			var number = parseInt($(this).next().val());
+			var price = $(this).parent().prev().text();
+			if (number<= 1) {
+				$(this).css("color","#c3c3c3");
+				$(this).css("cursor","not-allowed");
+				return false;
+			}else
+			{
+				$(this).parent().next().text((number*price).toFixed(2));
+				$(this).next().val(--number);
+				console.log(number*price);
+				$(this).siblings('.plus').css("color","#333");
+				$(this).siblings('.plus').css("cursor","pointer");
+			}
+		})
+		// 数量相加
+		$(".amount .plus").click(function(){
+			var number = parseInt($(this).prev().val());
+			var price = $(this).parent().prev().text();
+			if (number==10) {
+				alert("库存不够啦！");
+				$(this).css("color","#eee");
+				$(this).css("cursor","not-allowed");
+				return false;
+			}else
+			{	
+				$(this).prev().val(++number);
+				$(this).parent().next().text((number*price).toFixed(2));
+				$(this).siblings('.reduce').css("color","#333");
+				$(this).siblings('.reduce').css("cursor","pointer");
+			}
+		})
+
+		// 计算总价	数量*单价=总价
+		function productTotal(){
+
+		}
+	</script>
+</body>
+</html>
